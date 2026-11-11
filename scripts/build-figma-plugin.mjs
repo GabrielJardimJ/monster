@@ -1,0 +1,13 @@
+import fs from 'node:fs'
+let code=fs.readFileSync('figma/create-foundations.js','utf8')
+code=code.replace("const dark=sem.addMode('Dark');const semantic={};", "let dark;try{dark=sem.addMode('Dark')}catch{}const darkCollection=dark?sem:figma.variables.createVariableCollection('Untold / Semantic Dark');const semantic={};const semanticDark={};")
+code=code.replace("v.setValueForMode(dark,{type:'VARIABLE_ALIAS',id:prim[TOKENS.semantic.dark[key]].id});", "if(dark){v.setValueForMode(dark,{type:'VARIABLE_ALIAS',id:prim[TOKENS.semantic.dark[key]].id});semanticDark[key]=v;}else{const dv=figma.variables.createVariable(key,darkCollection,'COLOR');dv.scopes=v.scopes;dv.setValueForMode(darkCollection.defaultModeId,{type:'VARIABLE_ALIAS',id:prim[TOKENS.semantic.dark[key]].id});dv.setVariableCodeSyntax('WEB','var(--'+key+')');semanticDark[key]=dv;}")
+code=code.replace("const fill=(n,key)","let activeSemantic=semantic;const fill=(n,key)").replace("'color',semantic[key])","'color',activeSemantic[key])")
+code=code.replace("const scope=box(titleText,1152);scope.setExplicitVariableModeForCollection(sem,mode);", "activeSemantic=mode===sem.defaultModeId?semantic:semanticDark;const scope=box(titleText,1152);if(dark)scope.setExplicitVariableModeForCollection(sem,mode);")
+code=code.replace("const typeSection=box('Typography',1152)","activeSemantic=semantic;const typeSection=box('Typography',1152)")
+code=code.replace("const n=figma.createAutoLayout(dir);","const n=figma.createFrame();n.layoutMode=dir;")
+code=code.slice(0,code.lastIndexOf('return {createdNodeIds:'))
+code+=fs.readFileSync('figma/create-components.js','utf8')
+fs.writeFileSync('figma/code.js','async function main(){\n'+code+"\nfigma.closePlugin('Untold importada: fundamentos, tokens e núcleo Button / Input / Badge / Card.');\n}\nmain().catch(e=>figma.closePlugin(e.message));\n")
+fs.writeFileSync('figma/manifest.json',JSON.stringify({name:'Untold · Design System',api:'1.0.0',main:'code.js',editorType:['figma'],networkAccess:{allowedDomains:['none']}},null,2))
+console.log('Local Figma plugin generated. Coverage: foundations + 4 component families; remote execution limited by Starter plan.')

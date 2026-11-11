@@ -1,0 +1,17 @@
+{
+  "passed": [
+    "Tema escuro altera os tokens e persiste",
+    "8 pares de contraste AA: dark",
+    "8 pares de contraste AA: light",
+    "Busca filtra a seção pelo componente",
+    "Dialog move o foco, fecha com Escape e devolve o foco",
+    "Sheet abre e fecha por teclado",
+    "Select mostra o label escolhido",
+    "Combobox comunica ausência de resultados",
+    "Switch muda valor e descrição",
+    "Button demonstra estado de carregamento e retorno",
+    "Receita de formulário valida e confirma demonstração local",
+    "Navegação mobile abre com foco e fecha após navegar"
+  ],
+  "errors": []
+}
